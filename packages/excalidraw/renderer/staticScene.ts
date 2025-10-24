@@ -399,7 +399,11 @@ const _renderStaticScene = ({
             );
           }
           if (!isExporting) {
-            renderLinkIcon(element, context, appState, elementsMap);
+            if (element.customData?.component) {
+              // do not render link icon for embeddables with components
+            } else {
+              renderLinkIcon(element, context, appState, elementsMap);
+            }
           }
         };
         // - when exporting the whole canvas, we DO NOT apply clipping

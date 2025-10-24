@@ -1245,7 +1245,7 @@ class App extends React.Component<AppProps, AppState> {
                     : POINTER_EVENTS.disabled,
                 }}
               >
-                {isHovered && (
+                {isHovered && !el.customData?.component && (
                   <div className="excalidraw__embeddable-hint">
                     {t("buttons.embeddableInteractionButton")}
                   </div>
@@ -1619,7 +1619,8 @@ class App extends React.Component<AppProps, AppState> {
                         {selectedElements.length === 1 &&
                           this.state.openDialog?.name !==
                             "elementLinkSelector" &&
-                          this.state.showHyperlinkPopup && (
+                          this.state.showHyperlinkPopup &&
+                          !firstSelectedElement.customData?.component && (
                             <Hyperlink
                               key={firstSelectedElement.id}
                               element={firstSelectedElement}
@@ -8238,11 +8239,13 @@ class App extends React.Component<AppProps, AppState> {
         // prevent dragging even if we're no longer holding cmd/ctrl otherwise
         // it would have weird results (stuff jumping all over the screen)
         // Checking for editingTextElement to avoid jump while editing on mobile #6503
+
         if (
           selectedElements.length > 0 &&
           !pointerDownState.withCmdOrCtrl &&
           !this.state.editingTextElement &&
-          this.state.activeEmbeddable?.state !== "active"
+          (this.state.activeEmbeddable?.state !== "active" ||
+            this.state.activeEmbeddable?.element.customData?.component)
         ) {
           const dragOffset = {
             x: pointerCoords.x - pointerDownState.origin.x,
