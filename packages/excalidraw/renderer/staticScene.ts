@@ -50,6 +50,19 @@ const strokeGrid = (
   width: number,
   height: number,
 ) => {
+  let gridLineColorBold = GridLineColor.Bold as string;
+  let gridLineColorRegular = GridLineColor.Regular as string;
+  const $el = document.querySelector(".excalidraw");
+
+  if ($el) {
+    gridLineColorBold =
+      getComputedStyle($el).getPropertyValue("--grid-line-color-bold") ??
+      gridLineColorBold;
+    gridLineColorRegular =
+      getComputedStyle($el).getPropertyValue("--grid-line-color-regular") ??
+      gridLineColorRegular;
+  }
+
   const offsetX = (scrollX % gridSize) - gridSize;
   const offsetY = (scrollY % gridSize) - gridSize;
 
@@ -82,7 +95,7 @@ const strokeGrid = (
 
     context.beginPath();
     context.setLineDash(isBold ? [] : lineDash);
-    context.strokeStyle = isBold ? GridLineColor.Bold : GridLineColor.Regular;
+    context.strokeStyle = isBold ? gridLineColorBold : gridLineColorRegular;
     context.moveTo(x, offsetY - gridSize);
     context.lineTo(x, Math.ceil(offsetY + height + gridSize * 2));
     context.stroke();
@@ -101,7 +114,7 @@ const strokeGrid = (
 
     context.beginPath();
     context.setLineDash(isBold ? [] : lineDash);
-    context.strokeStyle = isBold ? GridLineColor.Bold : GridLineColor.Regular;
+    context.strokeStyle = isBold ? gridLineColorBold : gridLineColorRegular;
     context.moveTo(offsetX - gridSize, y);
     context.lineTo(Math.ceil(offsetX + width + gridSize * 2), y);
     context.stroke();
