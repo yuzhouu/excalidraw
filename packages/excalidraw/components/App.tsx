@@ -468,6 +468,13 @@ import {
   getMinTextElementWidth,
 } from "../element/textMeasurements";
 
+import {
+  moveOneLeft,
+  moveOneRight,
+  moveAllLeft,
+  moveAllRight,
+} from "../zindex";
+
 const AppContext = React.createContext<AppClassProperties>(null!);
 const AppPropsContext = React.createContext<AppProps>(null!);
 
@@ -745,6 +752,10 @@ class App extends React.Component<AppProps, AppState> {
         onPointerUp: (cb) => this.onPointerUpEmitter.on(cb),
         onScrollChange: (cb) => this.onScrollChangeEmitter.on(cb),
         onUserFollow: (cb) => this.onUserFollowEmitter.on(cb),
+        moveOneLeft: this.moveOneLeft,
+        moveOneRight: this.moveOneRight,
+        moveAllLeft: this.moveAllLeft,
+        moveAllRight: this.moveAllRight,
       } as const;
       if (typeof excalidrawAPI === "function") {
         excalidrawAPI(api);
@@ -1818,6 +1829,50 @@ class App extends React.Component<AppProps, AppState> {
       </div>
     );
   }
+
+  // selection zindex - 1
+  moveOneLeft = () => {
+    const $els = this.scene.getNonDeletedElements();
+    const appState = this.state;
+    const $newEls = moveOneLeft($els, appState);
+    return this.updateScene({
+      elements: $newEls,
+      captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    });
+  };
+
+  // selection zindex + 1
+  moveOneRight = () => {
+    const $els = this.scene.getNonDeletedElements();
+    const appState = this.state;
+    const $newEls = moveOneRight($els, appState);
+    return this.updateScene({
+      elements: $newEls,
+      captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    });
+  };
+
+  // selection zindex -Infinite
+  moveAllLeft = () => {
+    const $els = this.scene.getNonDeletedElements();
+    const appState = this.state;
+    const $newEls = moveAllLeft($els, appState);
+    return this.updateScene({
+      elements: $newEls,
+      captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    });
+  };
+
+  // selection zindex +Infinite
+  moveAllRight = () => {
+    const $els = this.scene.getNonDeletedElements();
+    const appState = this.state;
+    const $newEls = moveAllRight($els, appState);
+    return this.updateScene({
+      elements: $newEls,
+      captureUpdate: CaptureUpdateAction.IMMEDIATELY,
+    });
+  };
 
   public focusContainer: AppClassProperties["focusContainer"] = () => {
     this.excalidrawContainerRef.current?.focus();
@@ -9929,12 +9984,22 @@ class App extends React.Component<AppProps, AppState> {
         this.state,
       );
 
-      const imageFile = await fileOpen({
-        description: "Image",
-        extensions: Object.keys(
-          IMAGE_MIME_TYPES,
-        ) as (keyof typeof IMAGE_MIME_TYPES)[],
-      });
+      let imageFile: File;
+      if (this.props.filePicker) {
+        imageFile = await this.props.filePicker({
+          description: "Image",
+          extensions: Object.keys(
+            IMAGE_MIME_TYPES,
+          ) as (keyof typeof IMAGE_MIME_TYPES)[],
+        });
+      } else {
+        imageFile = await fileOpen({
+          description: "Image",
+          extensions: Object.keys(
+            IMAGE_MIME_TYPES,
+          ) as (keyof typeof IMAGE_MIME_TYPES)[],
+        });
+      }
 
       const imageElement = this.createImageElement({
         sceneX: x,

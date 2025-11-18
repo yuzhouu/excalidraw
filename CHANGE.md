@@ -13,3 +13,5 @@
 4. isMobileBreakpoint always return false
 5. getDefaultAppState().viewBackgroundColor 默认改为透明
 6. grid line color 从 css 变量中取
+7. 添加 moveOneLeft moveOneRight moveAllLeft moveAllRright api
+8. 支持 props.filePicker，自定义文件选择器

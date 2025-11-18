@@ -494,6 +494,8 @@ export type OnUserFollowedPayload = {
   action: "FOLLOW" | "UNFOLLOW";
 };
 
+type FILE_EXTENSION = Exclude<keyof typeof MIME_TYPES, "binary">;
+
 export interface ExcalidrawProps {
   onChange?: (
     elements: readonly OrderedExcalidrawElement[],
@@ -583,6 +585,10 @@ export interface ExcalidrawProps {
   ) => JSX.Element | null;
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
+  filePicker?: (opts: {
+    extensions?: FILE_EXTENSION[];
+    description: string;
+  }) => Promise<File>;
 }
 
 export type SceneData = {
@@ -816,6 +822,10 @@ export interface ExcalidrawImperativeAPI {
   onUserFollow: (
     callback: (payload: OnUserFollowedPayload) => void,
   ) => UnsubscribeCallback;
+  moveOneLeft: () => void;
+  moveOneRight: () => void;
+  moveAllLeft: () => void;
+  moveAllRight: () => void;
 }
 
 export type Device = Readonly<{
